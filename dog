@@ -1,0 +1,124 @@
+#!/usr/bin/env python
+import sys
+import subprocess
+import re
+import zlib
+import hashlib
+import chardet
+
+# TODO: rot47, z85, BER/DER/PEM+ASN.1
+#       (with key) xor
+def converter(data, alg):
+    if alg == 'rot13':
+        return data.encode('rot13')
+    elif alg == 'upper':
+        return data.upper()
+    elif alg == 'lower':
+        return data.lower()
+    else:
+        print >>sys.stderr, "unknown conversion algorithm: %s" % alg
+        sys.exit(1)
+
+# TODO: base91, ascii85, IPv4 dotted/decimal, IPv6 full/simplified
+#       (with key) RC4, DES, 3DES, AES, RSA, DSA, ECDSA
+#       (with magic) gzip, xz
+def encoder(data, alg):
+    if alg == 'hex':
+        return ''.join("\\x%02x" % ord(c) for c in data)
+    elif alg == 'unicode':
+        return ''.join("\\u%04x" % ord(c) for c in data.decode('utf-8'))
+    elif alg == 'url':
+        return ''.join("%%%02X" % ord(c) for c in data)
+    elif alg == 'html':
+        return ''.join("&#x%04x" % ord(c) for c in data.decode('utf-8'))
+    elif alg == 'base64':
+        return data.encode('base64')
+    elif alg == 'quopri':
+        return data.encode('quopri')
+    elif alg == 'punycode':
+        return data.decode('utf-8').encode('idna')
+    elif alg == 'uu':
+        return data.encode('uu')
+    elif alg == 'deflate':
+        return data.encode('zlib')
+    elif alg == 'bz2':
+        return data.encode('bz2')
+    else:
+        print >>sys.stderr, "unknown encoding algorithm: %s" % alg
+        sys.exit(1)
+
+def decoder(data, alg):
+    if alg == 'hex':
+        return re.sub(r'\\x([\dA-F]{2})', lambda m: chr(int(m.group(1),16)), data, flags=re.I)
+    elif alg == 'unicode':
+        return re.sub(r'\\u([\dA-F]{4})', lambda m: unichr(int(m.group(1),16)), data, flags=re.I).encode('utf-8')
+    elif alg == 'url':
+        return re.sub(r'%([\dA-F]{2})', lambda m: chr(int(m.group(1),16)), data, flags=re.I)
+    elif alg == 'html':
+        return re.sub(r'&#x([\dA-F]{4})', lambda m: unichr(int(m.group(1),16)), data, flags=re.I).encode('utf-8')
+    elif alg == 'base64':
+        return data.decode('base64')
+    elif alg == 'quopri':
+        return data.decode('quopri')
+    elif alg == 'punycode':
+        return data.decode('idna').encode('utf-8')
+    elif alg == 'uu':
+        return data.decode('uu')
+    elif alg == 'deflate':
+        return data.decode('zlib')
+    elif alg == 'bz2':
+        return data.decode('bz2')
+    else:
+        print >>sys.stderr, "unknown decoding algorithm: %s" % alg
+        sys.exit(1)
+
+# TODO: crc1/8/16/24, md4, rmd160, whirlpool
+def hashcalculator(data, alg):
+    if alg == 'crc32':
+        return "%08x" % zlib.crc32(data)
+    elif alg == 'adler32':
+        return "%08x" % zlib.adler32(data)
+    else:
+        try:
+            h = hashlib.new(alg)
+        except Exception as e:
+            print >>sys.stderr, "unknown hash algorithm: %s" % alg
+            sys.exit(1)
+        h.update(data)
+        return h.hexdigest()
+
+def iconverter(data, alg):
+    codecs = alg.split(':', 1)
+    if not codecs[0] or codecs[0] == 'auto':
+        codecs[0] = chardet.detect(data)['encoding']
+    if not codecs[1] or codecs[1] == 'auto':
+        codecs[1] = sys.stdout.encoding or 'utf8'
+    try:
+        return data.decode(codecs[0]).encode(codecs[1])
+    except LookupError:
+        print >>sys.stderr, "unknown character encoding: %s" % alg
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    args = sys.argv[1:]
+    catargs = ['cat']
+    dispatcher = None
+    while len(args) > 0:
+        arg = args.pop(0)
+        if arg in ('-c', '--convert'):
+            dispatcher = [converter, args.pop(0)]
+        elif arg in ('-e', '--encode'):
+            dispatcher = [encoder, args.pop(0)]
+        elif arg in ('-d', '--decode'):
+            dispatcher = [decoder, args.pop(0)]
+        elif arg in ('-h', '--hash'):
+            dispatcher = [hashcalculator, args.pop(0)]
+        elif arg in ('-i', '--iconv'):
+            dispatcher = [iconverter, args.pop(0)]
+        else:
+            catargs.append(arg)
+    data = subprocess.check_output(catargs, stdin=sys.stdin)
+    if dispatcher:
+        data = dispatcher[0](data, dispatcher[1])
+    sys.stdout.write(data)
