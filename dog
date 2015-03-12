@@ -15,6 +15,12 @@ def converter(data, alg):
         return data.upper()
     elif alg == 'lower':
         return data.lower()
+    elif alg == 'crlf':
+        return re.sub(r'(?:\x0d\x0a|\x0d|\x0a)', '\x0d\x0a', data)
+    elif alg == 'cr':
+        return re.sub(r'(?:\x0d\x0a|\x0d|\x0a)', '\x0d', data)
+    elif alg == 'lf':
+        return re.sub(r'(?:\x0d\x0a|\x0d|\x0a)', '\x0a', data)
     else:
         print >>sys.stderr, "unknown conversion algorithm: %s" % alg
         sys.exit(1)

@@ -29,6 +29,9 @@ test 'use just as cat' 'yes | head | ./dog -n' '     1	y
 test 'convert as rot13' 'echo -n 1234TESTtest | ./dog -c rot13' '1234GRFGgrfg'
 test 'convert as upper' 'echo -n 1234TESTtest | ./dog -c upper' '1234TESTTEST'
 test 'convert as lower' 'echo -n 1234TESTtest | ./dog -c lower' '1234testtest'
+test 'convert as crlf' 'echo -en "/\r\n/\r/\n/" | ./dog -c crlf' $'/\r\n/\r\n/\r\n/'
+test 'convert as cr' 'echo -en "/\r\n/\r/\n/" | ./dog -c cr' $'/\r/\r/\r/'
+test 'convert as lf' 'echo -en "/\r\n/\r/\n/" | ./dog -c lf' $'/\n/\n/\n/'
 
 test 'encode as hex' 'echo -n 日本語 | ./dog -e hex | base64' 'XHhlNlx4OTdceGE1XHhlNlx4OWNceGFjXHhlOFx4YWFceDll'
 test 'encode as unicode' 'echo -n 日本語 | ./dog -e unicode | base64' 'XHU2NWU1XHU2NzJjXHU4YTll'
