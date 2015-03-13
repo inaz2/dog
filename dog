@@ -9,6 +9,7 @@ import chardet
 # TODO: rot47, z85, BER/DER/PEM+ASN.1
 #       (with key) xor
 def converter(data, alg):
+    alg = alg.lower()
     if alg == 'bin':
         return bin(int(data, 0))
     elif alg == 'oct':
@@ -37,6 +38,7 @@ def converter(data, alg):
 #       (with key) RC4, DES, 3DES, AES, RSA, DSA, ECDSA
 #       (with magic) gzip, xz
 def encoder(data, alg):
+    alg = alg.lower()
     if alg == 'hex':
         return ''.join("\\x%02x" % ord(c) for c in data)
     elif alg == 'unicode':
@@ -62,6 +64,7 @@ def encoder(data, alg):
         sys.exit(1)
 
 def decoder(data, alg):
+    alg = alg.lower()
     if alg == 'hex':
         return re.sub(r'\\x([\dA-F]{2})', lambda m: chr(int(m.group(1),16)), data, flags=re.I)
     elif alg == 'unicode':
@@ -88,6 +91,7 @@ def decoder(data, alg):
 
 # TODO: crc1/8/16/24, md4, rmd160, whirlpool
 def hashcalculator(data, alg):
+    alg = alg.lower()
     if alg == 'crc32':
         return "%08x" % zlib.crc32(data)
     elif alg == 'adler32':

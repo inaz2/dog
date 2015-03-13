@@ -40,6 +40,7 @@ test 'convert as lf' 'echo -en "/\r\n/\r/\n/" | ./dog -c lf' $'/\n/\n/\n/'
 test 'convert as upper' 'echo -n 1234TESTtest | ./dog -c upper' '1234TESTTEST'
 test 'convert as lower' 'echo -n 1234TESTtest | ./dog -c lower' '1234testtest'
 test 'convert as rot13' 'echo -n 1234TESTtest | ./dog -c rot13' '1234GRFGgrfg'
+test 'convert with uppercase arg' 'echo -n 1234TESTtest | ./dog -c ROT13' '1234GRFGgrfg'
 
 test 'encode as hex' 'echo -n 日本語 | ./dog -e hex' "\\xe6\\x97\\xa5\\xe6\\x9c\\xac\\xe8\\xaa\\x9e"
 test 'encode as unicode' 'echo -n 日本語 | ./dog -e unicode' "\\u65e5\\u672c\\u8a9e"
@@ -51,6 +52,7 @@ test 'encode as punycode' 'echo -n 日本語 | ./dog -e punycode' 'xn--wgv71a119
 test 'encode as uu' 'echo -n 日本語 | ./dog -e uu | base64' 'YmVnaW4gNjY2IDxkYXRhPgopWUk+RVlJUkxaKko+CiAKZW5kCg=='
 test 'encode as deflate' 'echo -n 日本語 | ./dog -e deflate | base64' 'eJx7Nn3pszlrXqyaBwAhJAaB'
 test 'encode as bz2' 'echo -n 日本語 | ./dog -e bz2 | base64' 'QlpoOTFBWSZTWV1AcnsAAAMAMQCFAhQBQCAAIZDCEMCIHtTl8XckU4UJBdQHJ7A='
+test 'encode with uppercase arg' 'echo -n 日本語 | ./dog -e BZ2 | base64' 'QlpoOTFBWSZTWV1AcnsAAAMAMQCFAhQBQCAAIZDCEMCIHtTl8XckU4UJBdQHJ7A='
 
 test 'decode as hex' 'echo -n \\xe6\\x97\\xa5\\xe6\\x9c\\xac\\xe8\\xaa\\x9e | ./dog -d hex' '日本語'
 test 'decode as unicode' 'echo -n \\u65e5\\u672c\\u8a9e | ./dog -d unicode' '日本語'
@@ -62,6 +64,7 @@ test 'decode as punycode' 'echo -n xn--wgv71a119e | ./dog -d punycode' '日本�
 test 'decode as uu' 'echo -n YmVnaW4gNjY2IDxkYXRhPgopWUk+RVlJUkxaKko+CiAKZW5kCg== | base64 -d | ./dog -d uu' '日本語'
 test 'decode as deflate' 'echo -n eJx7Nn3pszlrXqyaBwAhJAaB | base64 -d | ./dog -d deflate' '日本語'
 test 'decode as bz2' 'echo -n QlpoOTFBWSZTWV1AcnsAAAMAMQCFAhQBQCAAIZDCEMCIHtTl8XckU4UJBdQHJ7A= | base64 -d | ./dog -d bz2' '日本語'
+test 'decode with uppercase arg' 'echo -n QlpoOTFBWSZTWV1AcnsAAAMAMQCFAhQBQCAAIZDCEMCIHtTl8XckU4UJBdQHJ7A= | base64 -d | ./dog -d BZ2' '日本語'
 
 test 'calculate hash CRC-32' 'echo -n 1234TESTtest | ./dog -h crc32' '0dabf39c'
 test 'calculate hash Adler-32' 'echo -n 1234TESTtest | ./dog -h adler32' '14c203cb'
@@ -71,9 +74,11 @@ test 'calculate hash SHA-224' 'echo -n 1234TESTtest | ./dog -h sha224' '31c65baa
 test 'calculate hash SHA-256' 'echo -n 1234TESTtest | ./dog -h sha256' '40e3243c6d9dfdb8bb1cc139263f0238e4658be0ab15fc562797e5ce3a535756'
 test 'calculate hash SHA-384' 'echo -n 1234TESTtest | ./dog -h sha384' '33609320885b35b8a288dea5176c6d2e47e7acfb8172c0b616dc92faa14718d42a102b0eb79da3f24fd6d7fbbcb20152'
 test 'calculate hash SHA-512' 'echo -n 1234TESTtest | ./dog -h sha512' '5e1f95319c563cbd7a66fa1239d5ca18101b61016e49501443af21ab80a6417e85dd260ad4bcd285b2fbd24496a28465fdd1b7b2a8ccaf34b65ca3dcef6d455c'
+test 'calculate hash with uppercase arg' 'echo -n 1234TESTtest | ./dog -h SHA512' '5e1f95319c563cbd7a66fa1239d5ca18101b61016e49501443af21ab80a6417e85dd260ad4bcd285b2fbd24496a28465fdd1b7b2a8ccaf34b65ca3dcef6d455c'
 
 test 'iconvert from UTF-8 to SJIS' 'echo -n 日本語 | ./dog -i utf8:sjis | base64' 'k/qWe4zq'
 test 'iconvert from SJIS to UTF-8' 'echo -n k/qWe4zq | base64 -d | ./dog -i sjis:utf8' '日本語'
 test 'iconvert from SJIS (auto) to UTF-8' 'echo -n k/qWe4zq | base64 -d | ./dog -i :utf8' '日本語'
 test 'iconvert from SJIS to UTF-8 (auto)' 'echo -n k/qWe4zq | base64 -d | ./dog -i sjis:' '日本語'
 test 'iconvert from SJIS (auto) to UTF-8 (auto)' 'echo -n k/qWe4zq | base64 -d | ./dog -i :' '日本語'
+test 'iconvert with uppercase arg' 'echo -n 日本語 | ./dog -i UTF8:SJIS | base64' 'k/qWe4zq'
