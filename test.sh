@@ -6,11 +6,15 @@ test() {
     local expect="$3"
     local result="$(eval $command 2>&1)"
     if [[ "$result" == "$expect" ]]; then
+        echo -en '\x1b[32m'
         echo "[+] $name: \$($command)"
+        echo -en '\x1b[0m'
     else
+        echo -en '\x1b[31m'
         echo "[!] $name: \$($command)"
         printf "      result = %q\n" "$result"
         printf "      expect = %q\n" "$expect"
+        echo -en '\x1b[0m'
     fi
 }
 
@@ -37,10 +41,10 @@ test 'convert as upper' 'echo -n 1234TESTtest | ./dog -c upper' '1234TESTTEST'
 test 'convert as lower' 'echo -n 1234TESTtest | ./dog -c lower' '1234testtest'
 test 'convert as rot13' 'echo -n 1234TESTtest | ./dog -c rot13' '1234GRFGgrfg'
 
-test 'encode as hex' 'echo -n 日本語 | ./dog -e hex | base64' 'XHhlNlx4OTdceGE1XHhlNlx4OWNceGFjXHhlOFx4YWFceDll'
-test 'encode as unicode' 'echo -n 日本語 | ./dog -e unicode | base64' 'XHU2NWU1XHU2NzJjXHU4YTll'
+test 'encode as hex' 'echo -n 日本語 | ./dog -e hex' "\\xe6\\x97\\xa5\\xe6\\x9c\\xac\\xe8\\xaa\\x9e"
+test 'encode as unicode' 'echo -n 日本語 | ./dog -e unicode' "\\u65e5\\u672c\\u8a9e"
 test 'encode as url' 'echo -n 日本語 | ./dog -e url' '%E6%97%A5%E6%9C%AC%E8%AA%9E'
-test 'encode as html' 'echo -n 日本語 | ./dog -e html | base64' 'JiN4NjVlNSYjeDY3MmMmI3g4YTll'
+test 'encode as html' 'echo -n 日本語 | ./dog -e html' '&#x65e5&#x672c&#x8a9e'
 test 'encode as base64' 'echo -n 日本語 | ./dog -e base64' '5pel5pys6Kqe'
 test 'encode as quopri' 'echo -n 日本語 | ./dog -e quopri' '=E6=97=A5=E6=9C=AC=E8=AA=9E'
 test 'encode as punycode' 'echo -n 日本語 | ./dog -e punycode' 'xn--wgv71a119e'
@@ -48,10 +52,10 @@ test 'encode as uu' 'echo -n 日本語 | ./dog -e uu | base64' 'YmVnaW4gNjY2IDxk
 test 'encode as deflate' 'echo -n 日本語 | ./dog -e deflate | base64' 'eJx7Nn3pszlrXqyaBwAhJAaB'
 test 'encode as bz2' 'echo -n 日本語 | ./dog -e bz2 | base64' 'QlpoOTFBWSZTWV1AcnsAAAMAMQCFAhQBQCAAIZDCEMCIHtTl8XckU4UJBdQHJ7A='
 
-test 'decode as hex' 'echo -n XHhlNlx4OTdceGE1XHhlNlx4OWNceGFjXHhlOFx4YWFceDll | base64 -d | ./dog -d hex' '日本語'
-test 'decode as unicode' 'echo -n XHU2NWU1XHU2NzJjXHU4YTll | base64 -d | ./dog -d unicode' '日本語'
+test 'decode as hex' 'echo -n \\xe6\\x97\\xa5\\xe6\\x9c\\xac\\xe8\\xaa\\x9e | ./dog -d hex' '日本語'
+test 'decode as unicode' 'echo -n \\u65e5\\u672c\\u8a9e | ./dog -d unicode' '日本語'
 test 'decode as url' 'echo -n %E6%97%A5%E6%9C%AC%E8%AA%9E | ./dog -d url' '日本語'
-test 'decode as html' 'echo -n JiN4NjVlNSYjeDY3MmMmI3g4YTll | base64 -d | ./dog -d html' '日本語'
+test 'decode as html' 'echo -n \&#x65e5\&#x672c\&#x8a9e | ./dog -d html' '日本語'
 test 'decode as base64' 'echo -n 5pel5pys6Kqe | ./dog -d base64' '日本語'
 test 'decode as quopri' 'echo -n =E6=97=A5=E6=9C=AC=E8=AA=9E | ./dog -d quopri' '日本語'
 test 'decode as punycode' 'echo -n xn--wgv71a119e | ./dog -d punycode' '日本語'
