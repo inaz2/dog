@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import sys
-import subprocess
+from subprocess import Popen, PIPE
 import re
 import zlib
 import hashlib
@@ -120,19 +120,25 @@ if __name__ == '__main__':
     dispatcher = None
     while len(args) > 0:
         arg = args.pop(0)
-        if arg in ('-c', '--convert'):
-            dispatcher = [converter, args.pop(0)]
-        elif arg in ('-e', '--encode'):
-            dispatcher = [encoder, args.pop(0)]
-        elif arg in ('-d', '--decode'):
-            dispatcher = [decoder, args.pop(0)]
-        elif arg in ('-h', '--hash'):
-            dispatcher = [hashcalculator, args.pop(0)]
-        elif arg in ('-i', '--iconv'):
-            dispatcher = [iconverter, args.pop(0)]
-        else:
-            catargs.append(arg)
-    data = subprocess.check_output(catargs, stdin=sys.stdin)
+        if len(args) > 0:
+            if arg in ('-c', '--convert'):
+                dispatcher = [converter, args.pop(0)]
+                continue
+            elif arg in ('-e', '--encode'):
+                dispatcher = [encoder, args.pop(0)]
+                continue
+            elif arg in ('-d', '--decode'):
+                dispatcher = [decoder, args.pop(0)]
+                continue
+            elif arg in ('-h', '--hash'):
+                dispatcher = [hashcalculator, args.pop(0)]
+                continue
+            elif arg in ('-i', '--iconv'):
+                dispatcher = [iconverter, args.pop(0)]
+                continue
+        catargs.append(arg)
+    p = Popen(catargs, stdin=sys.stdin, stdout=PIPE)
+    out, err = p.communicate()
     if dispatcher:
-        data = dispatcher[0](data, dispatcher[1])
-    sys.stdout.write(data)
+        out = dispatcher[0](out, dispatcher[1])
+    sys.stdout.write(out)
