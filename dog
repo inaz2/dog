@@ -99,7 +99,7 @@ def hashcalculator(data, alg):
             print >>sys.stderr, "unknown hash algorithm: %s" % alg
             sys.exit(1)
         h.update(data)
-        return h.hexdigest()
+        return "%s\n" % h.hexdigest()
 
 def iconverter(data, alg):
     codecs = alg.split(':', 1)
