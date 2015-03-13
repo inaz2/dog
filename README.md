@@ -13,7 +13,7 @@ dog [-c algorithm] [-e algorithm] [-d algorithm] [-h algorithm] [-i from:to] [..
 ## DESCRIPTION
 
 Dog is a program similar to cat (1), but it has many more features.
-Dog is able to translate input.
+Dog is able to translate the input.
 
 ## OPTIONS
 
@@ -22,19 +22,19 @@ Dog does the translation after a cat listened.
 
 -c or --convert
 
-* do asymmetric conversions such as rot13
+* do (asymmetric) conversion such as rot13
 
 -e or --encode
 
-* do symmetric encodings such as base64
+* do symmetric encoding such as base64
 
 -d or --decode
 
-* do symmetric decodings such as base64
+* do symmetric decoding such as base64
 
 -h or --hash
 
-* calculate hash such as SHA-1
+* do checksum/hash calculation such as SHA-1
 
 -i or --iconv
 
