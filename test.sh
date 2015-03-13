@@ -74,6 +74,6 @@ test 'calculate hash SHA-512' 'echo -n 1234TESTtest | ./dog -h sha512' '5e1f9531
 
 test 'iconvert from UTF-8 to SJIS' 'echo -n 日本語 | ./dog -i utf8:sjis | base64' 'k/qWe4zq'
 test 'iconvert from SJIS to UTF-8' 'echo -n k/qWe4zq | base64 -d | ./dog -i sjis:utf8' '日本語'
-test 'iconvert from UTF-8 (auto) to SJIS' 'echo -n 日本語 | ./dog -i :sjis | base64' 'k/qWe4zq'
 test 'iconvert from SJIS (auto) to UTF-8' 'echo -n k/qWe4zq | base64 -d | ./dog -i :utf8' '日本語'
+test 'iconvert from SJIS to UTF-8 (auto)' 'echo -n k/qWe4zq | base64 -d | ./dog -i sjis:' '日本語'
 test 'iconvert from SJIS (auto) to UTF-8 (auto)' 'echo -n k/qWe4zq | base64 -d | ./dog -i :' '日本語'
