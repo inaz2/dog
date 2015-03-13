@@ -9,18 +9,26 @@ import chardet
 # TODO: rot47, z85, BER/DER/PEM+ASN.1
 #       (with key) xor
 def converter(data, alg):
-    if alg == 'rot13':
-        return data.encode('rot13')
-    elif alg == 'upper':
-        return data.upper()
-    elif alg == 'lower':
-        return data.lower()
+    if alg == 'bin':
+        return bin(int(data, 0))
+    elif alg == 'oct':
+        return "0o%o" % int(data, 0)
+    elif alg == 'dec':
+        return str(int(data, 0))
+    elif alg == 'hex':
+        return hex(int(data, 0))
     elif alg == 'crlf':
         return re.sub(r'(?:\x0d\x0a|\x0d|\x0a)', '\x0d\x0a', data)
     elif alg == 'cr':
         return re.sub(r'(?:\x0d\x0a|\x0d|\x0a)', '\x0d', data)
     elif alg == 'lf':
         return re.sub(r'(?:\x0d\x0a|\x0d|\x0a)', '\x0a', data)
+    elif alg == 'upper':
+        return data.upper()
+    elif alg == 'lower':
+        return data.lower()
+    elif alg == 'rot13':
+        return data.encode('rot13')
     else:
         print >>sys.stderr, "unknown conversion algorithm: %s" % alg
         sys.exit(1)
