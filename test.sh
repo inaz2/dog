@@ -82,3 +82,10 @@ test 'iconvert from SJIS (auto) to UTF-8' 'echo -n k/qWe4zq | base64 -d | ./dog 
 test 'iconvert from SJIS to UTF-8 (auto)' 'echo -n k/qWe4zq | base64 -d | ./dog -i sjis:' '日本語'
 test 'iconvert from SJIS (auto) to UTF-8 (auto)' 'echo -n k/qWe4zq | base64 -d | ./dog -i :' '日本語'
 test 'iconvert with uppercase arg' 'echo -n 日本語 | ./dog -i UTF8:SJIS | base64' 'k/qWe4zq'
+
+targz='H4sIAD5/A1UAA+3PMQ7CMBAEQD/FPyC2wf9Bgi4iUkh4PyZAQwFV0jDT7Em3xd3pfNtd5r4PK+qaWuuSzWcuc8qHRymXVEKX8r7VY1nzqLf5Oh3HGMM4DNO33q/984/0yk1OBwAAAAAAAAAA4H/dAQvrGqMAKAAA'
+tarbz2='QlpoOTFBWSZTWQo+uHQAAHl7hNiAAEBAAP8AAEBmBZ8AABAACCAAdQySepppo0G1ANqCSKaAZABoaTOI0EgaACRpJriF8rCLJIHQw83+gIN9VAZF2SE86DKMKlSySkav3w/TCw9acVDvZ4kkPxdyRThQkAo+uHQ='
+tarxz='/Td6WFoAAATm1rRGAgAhARYAAAB0L+Wj4Cf/AGtdADIZSy8hv6x5UJGyjw7ZkJa63wCkKUJKdi+XdhPXvuXC1Zl0J5dcIZ9ij9gtRydtm54x6WDWAV1A2LurhzdquxifPijG1HvdjDILU8AVuToba28kEe4ygF+7PT2jx/dhAgUEOsSI7T6jIHYAAAD0RizY3WXQfAABhwGAUAAAhkFlfLHEZ/sCAAAAAARZWg=='
+test 'list tar.gz' 'echo -n $targz | base64 -d | ./dog -l' $'gzip compressed data, from Unix, last modified: Sat Mar 14 09:22:22 2015\ncrw-rw-rw- root/root       1,3 2015-03-14 07:29 dev/null'
+test 'list tar.bz2' 'echo -n $tarbz2 | base64 -d | ./dog -l' $'bzip2 compressed data, block size = 900k\ncrw-rw-rw- root/root       1,3 2015-03-14 07:29 dev/null'
+test 'list tar.xz' 'echo -n $tarxz | base64 -d | ./dog -l' $'XZ compressed data\ncrw-rw-rw- root/root       1,3 2015-03-14 07:29 dev/null'

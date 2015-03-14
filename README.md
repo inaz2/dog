@@ -7,7 +7,7 @@ dog - opposite of cat
 ## SYNOPSIS
 
 ```
-dog [-c algorithm] [-e algorithm] [-d algorithm] [-h algorithm] [-i from:to] [...]
+dog [-c algorithm] [-e algorithm] [-d algorithm] [-h algorithm] [-i from:to] [-l] [...]
 ```
 
 ## DESCRIPTION
@@ -39,6 +39,10 @@ Dog does the translation after a cat listened.
 -i or --iconv
 
 * decode then encode in input:output character encodings such as utf8:sjis
+
+-l or --list
+
+* show file type, list files in a tar archive (require file(1), tar(1))
 
 ## SEE ALSO
 

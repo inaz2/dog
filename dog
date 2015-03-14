@@ -48,7 +48,7 @@ def encoder(data, alg):
     elif alg == 'html':
         return ''.join("&#x%04x" % ord(c) for c in data.decode('utf-8'))
     elif alg == 'base64':
-        return data.encode('base64')
+        return data.encode('base64').replace('\n', '')
     elif alg == 'quopri':
         return data.encode('quopri')
     elif alg == 'punycode':
@@ -117,6 +117,27 @@ def iconverter(data, alg):
         print >>sys.stderr, "unknown character encoding: %s" % alg
         sys.exit(1)
 
+def fileinspector(data, alg=None):
+    p = Popen(['file', '-'], stdin=PIPE, stdout=PIPE)
+    out, err = p.communicate(data)
+    result = out.split(': ', 1)[1]
+
+    cmd = None
+    if 'POSIX tar archive' in result:
+        cmd = ['tar', 'tvf', '-']
+    elif 'gzip compressed data' in result and not ', was' in result:
+        cmd = ['tar', 'ztvf', '-']
+    elif 'bzip2 compressed data' in result and not ', was' in result:
+        cmd = ['tar', 'jtvf', '-']
+    elif 'XZ compressed data' in result and not ', was' in result:
+        cmd = ['tar', 'Jtvf', '-']
+
+    if cmd:
+        p = Popen(cmd, stdin=PIPE, stdout=PIPE)
+        out, err = p.communicate(data)
+        result += out
+    return result
+
 
 if __name__ == '__main__':
     args = sys.argv[1:]
@@ -140,6 +161,9 @@ if __name__ == '__main__':
             elif arg in ('-i', '--iconv'):
                 dispatcher = [iconverter, args.pop(0)]
                 continue
+        if arg in ('-l', '--list'):
+            dispatcher = [fileinspector, None]
+            continue
         catargs.append(arg)
     p = Popen(catargs, stdin=sys.stdin, stdout=PIPE)
     out, err = p.communicate()
