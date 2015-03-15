@@ -142,6 +142,14 @@ def fileinspector(data, alg=None):
             f.write(data)
             f.flush()
             result += run_command("unzip -l %s | sed 1d" % f.name, data, shell=True)
+    elif result.startswith('ELF '):
+        with NamedTemporaryFile() as f:
+            f.write(data)
+            f.flush()
+            if result.endswith('not stripped\n'):
+                result += run_command("nm -n %s 2>&1" % f.name, data, shell=True)
+            else:
+                result += run_command("nm -n -D %s 2>&1" % f.name, data, shell=True)
     else:
         result += run_command('od -tx1z 2>/dev/null | head', data, shell=True)
 
