@@ -5,6 +5,7 @@ import re
 import zlib
 import hashlib
 import chardet
+from tempfile import NamedTemporaryFile
 
 # TODO: rot47, z85, BER/DER/PEM+ASN.1
 #       (with key) xor
@@ -118,24 +119,32 @@ def iconverter(data, alg):
         sys.exit(1)
 
 def fileinspector(data, alg=None):
-    p = Popen(['file', '-'], stdin=PIPE, stdout=PIPE)
-    out, err = p.communicate(data)
+    def run_command(cmd, data, shell=False):
+        p = Popen(cmd, stdin=PIPE, stdout=PIPE, shell=shell)
+        out, err = p.communicate(data)
+        if p.returncode != 0:
+            sys.exit(p.returncode)
+        return out
+
+    out = run_command(['file', '-'], data)
     result = out.split(': ', 1)[1]
 
-    cmd = None
-    if 'POSIX tar archive' in result:
-        cmd = ['tar', 'tvf', '-']
-    elif 'gzip compressed data' in result and not ', was' in result:
-        cmd = ['tar', 'ztvf', '-']
-    elif 'bzip2 compressed data' in result and not ', was' in result:
-        cmd = ['tar', 'jtvf', '-']
-    elif 'XZ compressed data' in result and not ', was' in result:
-        cmd = ['tar', 'Jtvf', '-']
+    if result.startswith('POSIX tar archive'):
+        result += run_command(['tar', 'tvf', '-'], data)
+    elif result.startswith('gzip compressed data, from Unix'):
+        result += run_command(['tar', 'ztvf', '-'], data)
+    elif result.startswith('bzip2 compressed data'):
+        result += run_command(['tar', 'jtvf', '-'], data)
+    elif result.startswith('XZ compressed data'):
+        result += run_command(['tar', 'Jtvf', '-'], data)
+    elif result.startswith('Zip archive data'):
+        with NamedTemporaryFile() as f:
+            f.write(data)
+            f.flush()
+            result += run_command("unzip -l %s | sed 1d" % f.name, data, shell=True)
+    else:
+        result += run_command('od -tx1z 2>/dev/null | head', data, shell=True)
 
-    if cmd:
-        p = Popen(cmd, stdin=PIPE, stdout=PIPE)
-        out, err = p.communicate(data)
-        result += out
     return result
 
 
