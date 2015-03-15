@@ -167,6 +167,8 @@ if __name__ == '__main__':
         catargs.append(arg)
     p = Popen(catargs, stdin=sys.stdin, stdout=PIPE)
     out, err = p.communicate()
+    if p.returncode != 0:
+        sys.exit(p.returncode)
     if dispatcher:
         out = dispatcher[0](out, dispatcher[1])
     sys.stdout.write(out)
