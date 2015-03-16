@@ -42,7 +42,7 @@ Dog does the translation after a cat listened.
 
 -l or --list
 
-* show file type, list files in a tar archive (require file(1), tar(1))
+* show file type and inspect its contents (`tar -tvf` etc.)
 
 ## SEE ALSO
 
