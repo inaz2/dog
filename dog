@@ -131,7 +131,7 @@ def fileinspector(data, alg=None):
 
     if result.startswith('POSIX tar archive'):
         result += run_command(['tar', 'tvf', '-'], data)
-    elif result.startswith('gzip compressed data, from Unix'):
+    elif result.startswith('gzip compressed data') and not ', was ' in result:
         result += run_command(['tar', 'ztvf', '-'], data)
     elif result.startswith('bzip2 compressed data'):
         result += run_command(['tar', 'jtvf', '-'], data)
