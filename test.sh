@@ -43,7 +43,7 @@ test 'convert as rot13' 'echo -n 1234TESTtest | ./dog -c rot13' '1234GRFGgrfg'
 test 'convert with uppercase arg' 'echo -n 1234TESTtest | ./dog -c ROT13' '1234GRFGgrfg'
 
 test 'encode as hex' 'echo -n 日本語 | ./dog -e hex' "\\xe6\\x97\\xa5\\xe6\\x9c\\xac\\xe8\\xaa\\x9e"
-test 'encode as unicode' 'echo -n 日本語 | ./dog -e unicode' "\\u65e5\\u672c\\u8a9e"
+test 'encode as jsescape' 'echo -n 日本語 | ./dog -e jsescape' "%u97e6%ue6a5%uac9c%uaae8%u009e"
 test 'encode as url' 'echo -n 日本語 | ./dog -e url' '%E6%97%A5%E6%9C%AC%E8%AA%9E'
 test 'encode as html' 'echo -n 日本語 | ./dog -e html' '&#x65e5&#x672c&#x8a9e'
 test 'encode as base64' 'echo -n 日本語 | ./dog -e base64' '5pel5pys6Kqe'
@@ -55,7 +55,7 @@ test 'encode as bz2' 'echo -n 日本語 | ./dog -e bz2 | base64' 'QlpoOTFBWSZTWV
 test 'encode with uppercase arg' 'echo -n 日本語 | ./dog -e BZ2 | base64' 'QlpoOTFBWSZTWV1AcnsAAAMAMQCFAhQBQCAAIZDCEMCIHtTl8XckU4UJBdQHJ7A='
 
 test 'decode as hex' 'echo -n \\xe6\\x97\\xa5\\xe6\\x9c\\xac\\xe8\\xaa\\x9e | ./dog -d hex' '日本語'
-test 'decode as unicode' 'echo -n \\u65e5\\u672c\\u8a9e | ./dog -d unicode' '日本語'
+test 'decode as jsescape' 'echo -n %u97e6%ue6a5%uac9c%uaae8%u009e | ./dog -d jsescape' '日本語'
 test 'decode as url' 'echo -n %E6%97%A5%E6%9C%AC%E8%AA%9E | ./dog -d url' '日本語'
 test 'decode as html' 'echo -n \&#x65e5\&#x672c\&#x8a9e | ./dog -d html' '日本語'
 test 'decode as base64' 'echo -n 5pel5pys6Kqe | ./dog -d base64' '日本語'
