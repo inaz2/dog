@@ -153,7 +153,7 @@ def fileinspector(data, alg=None):
             else:
                 result += run_command("nm -n -D %s 2>&1" % f.name, data, shell=True)
     else:
-        result += run_command('od -tx1z 2>/dev/null | head', data, shell=True)
+        result += run_command('od -Ax -tx1z -N 256', data, shell=True)
 
     return result
 
