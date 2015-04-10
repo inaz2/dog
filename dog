@@ -14,7 +14,7 @@ def converter(data, alg):
     if alg == 'bin':
         return bin(int(data, 0))
     elif alg == 'oct':
-        return "0o%o" % int(data, 0)
+        return oct(int(data, 0))
     elif alg == 'dec':
         return str(int(data, 0))
     elif alg == 'hex':

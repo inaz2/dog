@@ -30,8 +30,8 @@ test 'use just as cat' 'yes | head | ./dog -n' '     1	y
      9	y
     10	y'
 
-test 'convert as bin' 'echo -n 0o52 | ./dog -c bin' '0b101010'
-test 'convert as oct' 'echo -n 42 | ./dog -c oct' '0o52'
+test 'convert as bin' 'echo -n 052 | ./dog -c bin' '0b101010'
+test 'convert as oct' 'echo -n 42 | ./dog -c oct' '052'
 test 'convert as dec' 'echo -n 0x2a | ./dog -c dec' '42'
 test 'convert as hex' 'echo -n 0b101010 | ./dog -c hex' '0x2a'
 test 'convert as crlf' 'echo -en "/\r\n/\r/\n/" | ./dog -c crlf' $'/\r\n/\r\n/\r\n/'
